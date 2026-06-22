@@ -20,7 +20,7 @@
 ## 🚀 Demo en vivo
 
 ```
-https://stack-sight.vercel.app
+https://stack-sight-one.vercel.app
 ```
 
 ## 🛠️ Stack técnico
