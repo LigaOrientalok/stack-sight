@@ -111,7 +111,8 @@ createApp({
           useCORS: true,
         });
         const link = document.createElement('a');
-        link.download = `stack-${name.value.replace(/\s+/g, '-').toLowerCase() || 'default'}.png`;
+        const safeName = name.value.replace(/[^a-zA-Z0-9-\s]/g, '').replace(/\s+/g, '-').toLowerCase() || 'default';
+        link.download = `stack-${safeName}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
         showToast('✅ PNG exportado!', 'success');
