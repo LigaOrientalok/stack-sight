@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StackSight — Visualizador de Stack Tech</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>📊</text></svg>" />
+</head>
+<body>
+
+  <div id="app">
+    <nav class="ss-nav">
+      <span class="ss-logo">📊 StackSight</span>
+      <div class="ss-nav-links">
+        <a href="../index.html">← Portfolio</a>
+        <button class="ss-btn ss-btn-sm" @click="resetAll">Reiniciar</button>
+      </div>
+    </nav>
+
+    <main class="ss-main">
+      <header class="ss-header">
+        <h1>Visualizá tu Stack Tech</h1>
+        <p>Seleccioná tus tecnologías y generá una card lista para compartir</p>
+      </header>
+
+      <div class="ss-layout">
+
+        <div class="ss-panel ss-panel-edit">
+          <div class="ss-card-preview" ref="cardRef" :class="`ss-theme-${theme}`">
+            <div class="ss-card-bg"></div>
+            <div class="ss-card-content">
+              <div class="ss-card-title">
+                <input v-model="name" placeholder="Tu nombre" maxlength="30" />
+                <input v-model="role" placeholder="Tu rol" maxlength="40" />
+              </div>
+              <div class="ss-card-stack" v-if="stack.length">
+                <div class="ss-card-stack-label">Stack</div>
+                <div class="ss-card-icons">
+                  <div class="ss-card-icon" v-for="item in stack" :key="item.id" :title="item.label">
+                    <span class="sci-emoji">{{ item.icon }}</span>
+                    <span class="sci-label">{{ item.label }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ss-card-empty" v-else>
+                Seleccioná tecnologías abajo ✨
+              </div>
+            </div>
+          </div>
+
+          <div class="ss-preview-actions">
+            <div class="ss-theme-select">
+              <button v-for="t in themes" :key="t.id"
+                class="ss-theme-btn" :class="{ active: theme === t.id }"
+                @click="theme = t.id"
+                :style="{ background: t.bg, color: t.text }">
+                {{ t.label }}
+              </button>
+            </div>
+            <button class="ss-btn ss-btn-primary" @click="exportCard" :disabled="exporting">
+              {{ exporting ? 'Generando...' : '📸 Exportar PNG' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="ss-panel ss-panel-browse">
+          <div class="ss-search">
+            <input v-model="search" placeholder="Buscar tecnología..." />
+          </div>
+
+          <div class="ss-categories" v-for="cat in filteredCategories" :key="cat.name">
+            <h3 class="ss-cat-title">{{ cat.name }} <span class="ss-count">{{ cat.items.length }}</span></h3>
+            <div class="ss-tech-grid">
+              <button v-for="tech in cat.items" :key="tech.id"
+                class="ss-tech-btn"
+                :class="{ selected: isSelected(tech.id) }"
+                @click="toggleTech(tech)">
+                <span class="stb-emoji">{{ tech.icon }}</span>
+                <span class="stb-label">{{ tech.label }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ss-footer-info">
+        <p>🔄 Arrastrá los items seleccionados para reordenarlos · Click para sacarlos</p>
+      </div>
+    </main>
+
+    <div class="ss-toast" v-if="toast" :class="toast.type">{{ toast.msg }}</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
